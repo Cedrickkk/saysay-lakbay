@@ -1,5 +1,5 @@
 {
-  "id": "7c5d7950-ecd5-4f0c-97c4-164bae44c52e",
+  "id": "63f4bf8b-f7d8-4e22-ac86-23e448c2bc2d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -20,8 +20,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "password": {
-          "name": "password",
+        "googleId": {
+          "name": "googleId",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
@@ -34,6 +34,12 @@
         },
         "bio": {
           "name": "bio",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "refreshToken": {
+          "name": "refreshToken",
           "type": "text",
           "primaryKey": false,
           "notNull": false
