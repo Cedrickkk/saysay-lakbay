@@ -1,4 +1,5 @@
 import { configurePassport } from "@/config/passport";
+import auth from "@/routes/auth.routes";
 import routes from "@/routes/index";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -12,6 +13,8 @@ app.use(cookieParser());
 app.use(cors());
 
 configurePassport();
+
+app.use("/auth", auth);
 
 app.use("/api", routes);
 
