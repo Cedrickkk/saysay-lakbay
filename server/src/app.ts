@@ -1,10 +1,12 @@
+import { verifyAccessToken } from "@/middlewares/token";
+import authRoutes from "@/routes/auth.routes";
+import users from "@/routes/users.routes";
 import express from "express";
-import users from "@/routes/users";
 
 const app = express();
 
-app.use(express.json());
+app.use("/auth", authRoutes);
 
-app.use("/saysay-lakbay/users", users);
+app.use("/users", verifyAccessToken, users);
 
 export default app;

@@ -1,3 +1,5 @@
+// TODO: Fix type duplication from schema $infer.Select
+
 export interface User {
   id: number;
   email: string;
