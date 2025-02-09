@@ -13,7 +13,7 @@ export const generateToken = (user: User) => {
       email: user.email,
     },
     process.env.ACCESS_TOKEN_SECRET!,
-    { expiresIn: "7d" }
+    { expiresIn: "15min" }
   );
 
   const refreshToken = jwt.sign(
@@ -35,10 +35,6 @@ export const saveRefreshToken = async (
   await db.update(users).set({ refreshToken }).where(eq(users.id, userId));
 };
 
-export const verifyRefreshToken = (refreshToken: string) => {
-  return jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!);
-};
-
 export const revokeRefreshAccessToken = async (userId: number) => {
   await db
     .update(users)
@@ -46,18 +42,27 @@ export const revokeRefreshAccessToken = async (userId: number) => {
     .where(eq(users.id, userId));
 };
 
-const cookieOptions: CookieOptions = {
+const baseCookieOptions: CookieOptions = {
   httpOnly: true,
-  secure: __prod__,
   sameSite: "lax",
-  maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
   path: "/",
+  secure: __prod__,
   domain: __prod__ ? `.${process.env.DOMAIN}` : "",
+};
+
+const accessTokenCookieOptions: CookieOptions = {
+  ...baseCookieOptions,
+  maxAge: 1000 * 60 * 15,
+} as const;
+
+const refreshTokenCookieOptions: CookieOptions = {
+  ...baseCookieOptions,
+  maxAge: 1000 * 60 * 60 * 24 * 30,
 } as const;
 
 export const sendAuthCookies = (res: Response, user: User) => {
   const { accessToken, refreshToken } = generateToken(user);
 
-  res.cookie("accessToken", accessToken, cookieOptions);
-  res.cookie("refreshToken", refreshToken, cookieOptions);
+  res.cookie("accessToken", accessToken, accessTokenCookieOptions);
+  res.cookie("refreshToken", refreshToken, refreshTokenCookieOptions);
 };
