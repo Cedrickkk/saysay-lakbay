@@ -1,12 +1,18 @@
-import { verifyAccessToken } from "@/middlewares/token";
-import authRoutes from "@/routes/auth.routes";
-import users from "@/routes/users.routes";
+import { configurePassport } from "@/config/passport";
+import routes from "@/routes/index";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 import express from "express";
 
 const app = express();
 
-app.use("/auth", authRoutes);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(cors());
 
-app.use("/users", verifyAccessToken, users);
+configurePassport();
+
+app.use("/api", routes);
 
 export default app;
