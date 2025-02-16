@@ -1,5 +1,6 @@
-import { User } from "@/types/user";
-import { sendAuthCookies } from "@/utils/auth";
+import { SelectUser } from "@/db/schema";
+import { isAuthenticated } from "@/middlewares/auth";
+import { sendAuthCookies } from "@/utils/cookies";
 import { FRONTEND_URL } from "@/utils/constants";
 import { Router } from "express";
 import passport from "passport";
@@ -21,9 +22,16 @@ router.get(
     session: false,
   }),
   (req, res) => {
-    sendAuthCookies(res, req.user as User);
-    res.redirect(FRONTEND_URL);
+    sendAuthCookies(res, req.user as SelectUser);
+    res.redirect(`${FRONTEND_URL}`);
   }
 );
+
+router.get("/status", isAuthenticated, (req, res) => {
+  res.status(200).json({
+    isAuthenticated: true,
+    user: req.user,
+  });
+});
 
 export default router;
