@@ -1,7 +1,7 @@
 import { ACCESS_TOKEN_SECRET } from "@/utils/constants";
 import { BadRequestError, UnauthorizedError } from "@/utils/errors";
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
 
 export const isAuthenticated = (
   req: Request,

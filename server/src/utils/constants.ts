@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-export const APP_PORT = process.env.APP_PORT!;
+export const PORT = process.env.PORT! || 3000;
 
 export const __prod__ = process.env.NODE_ENV === "production";
 

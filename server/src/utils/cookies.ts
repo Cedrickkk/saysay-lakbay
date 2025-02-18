@@ -1,11 +1,12 @@
 import { db } from "@/db";
-import { SelectUser, users } from "@/db/schema";
+import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { CookieOptions, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import { __prod__ } from "./constants";
+import { User } from "@/types/user";
 
-export const generateToken = (user: SelectUser) => {
+export const generateToken = (user: User) => {
   const accessToken = jwt.sign(
     {
       userId: user.id,
@@ -59,7 +60,7 @@ const refreshTokenCookieOptions: CookieOptions = {
   maxAge: 1000 * 60 * 60 * 24 * 30,
 } as const;
 
-export const sendAuthCookies = (res: Response, user: SelectUser) => {
+export const sendAuthCookies = (res: Response, user: User) => {
   const { accessToken, refreshToken } = generateToken(user);
 
   res.cookie("accessToken", accessToken, accessTokenCookieOptions);

@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import { ZodError } from "zod";
 
 export class BadRequestError extends Error {
   constructor(message: string) {
@@ -86,6 +87,16 @@ export function makeError<TError extends Error>(error: TError) {
     return {
       statusCode: StatusCodes.CONFLICT,
       error: defaultError,
+    };
+  }
+
+  if (error instanceof ZodError) {
+    return {
+      statusCode: StatusCodes.BAD_REQUEST,
+      error: {
+        ...defaultError,
+        issues: error.issues,
+      },
     };
   }
 

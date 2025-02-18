@@ -1,39 +1,42 @@
 import { db } from "@/db";
-import { SelectUser, users } from "@/db/schema/users";
+import { users } from "@/db/schema/users";
+import { User } from "@/types/user";
+import { NotFoundError } from "@/utils/errors";
 import { eq } from "drizzle-orm";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
 
 export const getUsers = async (
   req: Request,
-  res: Response<SelectUser[]> | Record<string, any>
+  res: Response<User[]> | Record<string, any>,
+  next: NextFunction
 ) => {
   try {
     const result = await db.select().from(users);
-    return res.status(200).json(result);
+    return res.status(StatusCodes.OK).json(result);
   } catch (error) {
-    return res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
 
 export const getUserById = async (
-  req: Request<{ id: number }>,
-  res: Response<SelectUser> | Record<string, any>
+  req: Request<User>,
+  res: Response<User> | Record<string, any>,
+  next: NextFunction
 ) => {
   try {
     const { id } = req.params;
+
     const user = await db.query.users.findFirst({
       where: eq(users.id, id),
     });
 
     if (!user) {
-      return res.status(204).json({
-        status: "ok",
-        message: "No user found",
-      });
+      throw new NotFoundError("User not found.");
     }
 
-    return res.status(200).json(user);
+    return res.status(StatusCodes.OK).json(user);
   } catch (error) {
-    return res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
